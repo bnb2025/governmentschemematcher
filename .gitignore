@@ -1,0 +1,16 @@
+# Byte-compiled / optimized / DLL files
+__pycache__/
+*.py[cod]
+
+# Environment files
+.env
+
+# Google service account keys and other JSON secrets
+*.json
+
+# OS files
+.DS_Store
+Thumbs.db
+
+# VS Code
+.vscode/

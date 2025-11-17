@@ -1,0 +1,7 @@
+python-dotenv
+google-auth
+google-adk
+google-cloud-bigquery
+Flask
+gunicorn
+google-cloud-secret-manager

@@ -10,13 +10,8 @@ from google.oauth2 import service_account
 from google.adk.tools import google_search
 from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 from google.adk.agents import Agent, LlmAgent,SequentialAgent
-from google.genai.adk import RunConfig, StreamingMode
-from google.genai import types
 
-config = RunConfig(
-    streaming_mode=StreamingMode.SSE,
-    max_llm_calls=200
-)
+
 
 # Silence specific ADK experimental warnings
 warnings.filterwarnings("ignore")
@@ -59,7 +54,7 @@ except Exception:
             # We can load the credentials directly from the string.
             #payload=os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
             # ---------- Credentials ----------
-credentials_path = r"C:\workspace\GovernmentSchemeMatcher\gokul-harsh-bnb2025-4b6b290f0621.json"
+credentials_path = r"C:\workspace\google_flash_agent\adk-agent\production_agent\gokul-harsh-bnb2025-4b6b290f0621.json"
 try:
     creds, project = google.auth.load_credentials_from_file(
         credentials_path,
@@ -109,5 +104,6 @@ bq_agent = LlmAgent(
             model="gemini-2.5-flash",
         )
 logger.info("Agent initialized: %s", bq_agent.name)
+
 root_agent = bq_agent
         

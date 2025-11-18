@@ -40,31 +40,46 @@ try:
 except Exception:
     pass
 
-            #try:
-            # Create the Secret Manager client.
-            #client = secretmanager.SecretManagerServiceClient()
-
-            # Access the secret version.
-            #response = client.access_secret_version(request={"name": secret_version_name})
-
-            # Extract the payload as a string.
-            #payload = response.payload.data.decode("UTF-8")
-            
-            # The payload is the service account JSON key.
-            # We can load the credentials directly from the string.
-            #payload=os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
-            # ---------- Credentials ----------
-credentials_path = r"C:\workspace\google_flash_agent\adk-agent\production_agent\gokul-harsh-bnb2025-4b6b290f0621.json"
 try:
-    creds, project = google.auth.load_credentials_from_file(
-        credentials_path,
-        scopes=["https://www.googleapis.com/auth/cloud-platform"],
-    )
-    logger.info("Loaded credentials for project: %s", project)
-except Exception as e:
-    logger.exception("Failed to load credentials from Secret Manager.")
-    raise
+            is_cloud_run = os.getenv("K_SERVICE") is not None
+            secret_version_name = "projects/849824250214/secrets/bq-agent-sa-key/versions/1"
+            
+            if is_cloud_run:
+                # Create the Secret Manager client.
+                client = secretmanager.SecretManagerServiceClient()
 
+                # Access the secret version.
+                response = client.access_secret_version(request={"name": secret_version_name})
+
+                # Extract the payload as a string.
+                payload = response.payload.data.decode("UTF-8")
+                service_account_info = json.loads(payload)
+                creds = service_account.Credentials.from_service_account_info(
+                service_account_info,
+                scopes=["https://www.googleapis.com/auth/cloud-platform"]
+                )
+            else:
+                # For local development, load credentials from a local file.
+                # The payload is the service account JSON key.
+                # We can load the credentials directly from the string.
+                #payload=os.getenv("GOOGLE_APPLICATION_CREDENTIALS")
+                # ---------- Credentials ----------
+                try:
+                    credentials_path = r"C:\workspace\google_flash_agent\adk-agent\production_agent\gokul-harsh-bnb2025-4b6b290f0621.json"
+                    creds, project = google.auth.load_credentials_from_file(
+                        credentials_path,
+                        scopes=["https://www.googleapis.com/auth/cloud-platform"],
+                    )
+                    logger.info("Loaded credentials for project: %s", project)
+                except Exception as e:
+                    logger.exception("Failed to load credentials from Secret Manager.")
+                    raise
+
+except Exception as e:
+                        print(f"Error accessing secret manager: {e}")
+                        raise
+
+#
 credentials_config = BigQueryCredentialsConfig(credentials=creds)
 
 bigquery_toolset = BigQueryToolset(

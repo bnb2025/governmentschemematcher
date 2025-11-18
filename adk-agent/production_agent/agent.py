@@ -10,6 +10,13 @@ from google.oauth2 import service_account
 from google.adk.tools import google_search
 from google.adk.tools.bigquery import BigQueryToolset, BigQueryCredentialsConfig
 from google.adk.agents import Agent, LlmAgent,SequentialAgent
+from google.genai.adk import RunConfig, StreamingMode
+from google.genai import types
+
+config = RunConfig(
+    streaming_mode=StreamingMode.SSE,
+    max_llm_calls=200
+)
 
 # Silence specific ADK experimental warnings
 warnings.filterwarnings("ignore")
@@ -89,7 +96,7 @@ bq_agent = LlmAgent(
                 "conversation engaging accurate and to the point for every government scheme for guests by answering their questions based on their eligiblity criterion."
 
             "You can provide general information and benefits and eligibility criterion, such as:"
-            "- The schemes offered and stored in database"
+            "- The schemes offered and stored in database and how to apply for them."
             "- Typical benefits and eligibility criteria."
             "- Conservation status and unique characteristics."
 
